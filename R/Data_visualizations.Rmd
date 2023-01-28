@@ -153,7 +153,7 @@ ggplot(aes(x = gdp, y = educ), data = CIACountries) +
 Change the color
 ```{r}
 ggplot(aes(x = gdp, y = educ), data = CIACountries) +
-  geom_point(shape = 23, colour = "red") +
+  geom_point(shape = 23, colour = "violet") +
   xlab("GDP") +
   ylab("Education") 
 ```
@@ -161,7 +161,7 @@ ggplot(aes(x = gdp, y = educ), data = CIACountries) +
 Change the x and y limits 
 ```{r}
 ggplot(aes(x = gdp, y = educ), data = CIACountries) +
-  geom_point(shape = 23, colour = "red") +
+  geom_point(shape = 23, colour = "red", fill = "yellow") +
   xlab("GDP") +
   ylab("Education") + 
   xlim(0,200000) + 
@@ -225,6 +225,7 @@ ggplot(aes(x = gdp, y = educ), data = CIACountries) +
 library(mdsr)
 data("SAT_2010")
 ```
+
 ```{r}
 #Base R
 hist(SAT_2010$math)
@@ -245,6 +246,11 @@ ggplot(aes(x = math), data = SAT_2010) + geom_density()
 
 #More jagged
 ggplot(aes(x = math), data = SAT_2010) + geom_density(bw = 0.01)
+
+#a histogram and a density plot on the same plot!!!
+ggplot(aes(x = math), data = SAT_2010) + geom_histogram(aes(y = after_stat(density))) + geom_density(colour = "purple")
+#we made y density also so they're on the same scale
+
 ```
 
 ```{r}

@@ -55,7 +55,8 @@ subset(CIACountries, select = c("country", "pop", "gdp"))
 #filter and select
 filter(select(CIACountries, country, pop, gdp), pop > 1e9)
 
-#Or we can do this with a pipeline
+#Or we can do this with a pipeline, which is easier to read. 
+#at the same time in the same line, order does not matter for these guys
 CIACountries %>% select(country, pop, gdp) %>% filter(pop > 1e9)
 
 #Or in base R
@@ -63,6 +64,7 @@ CIACountries[CIACountries$pop > 1e9,c("country", "pop", "gdp")]
 
 #or this:
 subset(CIACountries, pop > 1e9, select = c("country", "pop", "gdp"))
+
 ```
 #Mutate and Rename
 ```{r}
@@ -109,8 +111,7 @@ CIACountries_sort[1:5,]
 #Summarize and Group_by
 ```{r}
 #What is the average area by high vs low education countries?
-my_CIACountries <-
-  CIACountries %>% mutate(high_educ = educ > 4.5) %>% group_by(high_educ) %>% summarize(mn_area = mean(area))
+my_CIACountries <- CIACountries %>% mutate(high_educ = educ > 4.5) %>% group_by(high_educ) %>% summarize(mn_area = mean(area))
 my_CIACountries
 
 #Base R
@@ -120,10 +121,48 @@ tapply(my_CIACountries$area,my_CIACountries$high_educ, mean)
 
 ```
 
+
 ##In class assignment: What first letter has the largest population? 
+```{r}
+#My_CIACountries <- CIACountries %>% mutate(letter = substring(country,1,1))
+# adds the variable for letter. fletter is a better name! 
+#'3 more until answer'
+#population_and_letter <- subset(My_CIACountries, select = c("country", "pop", "letter"))
+#add_by_letter <- population_and_letter %>% group_by(letter) %>% #summarise(sum(pop))
+#add_by_letter
+#arrange in descending order and call the first row
+#My_CIACountries <- CIACountries %>% mutate(letter = substring(country,1,1)) %>%  #group_by(letter) %>% summarise(totalpop = sum(pop))
+
+CIACountries %>% 
+  mutate(letter = substring(country,1,1)) %>%  
+  group_by(letter) %>% 
+  summarise(totalpop = sum(pop)) %>%
+  arrange(-totalpop) %>%
+  head(5)
+
+
+```
+
 
 #What proportion of countries produce any oil stratified by net users class? 
 
+```{r}
+#stratify is summarise by group, the groups are "net users" class
+#proportion how??? use mutate at least
+#CIACountries %>% 
+#  summarise(oil_prod, net_users) #%>%
+#  mutate(proportion = CIACountries$as.integer(oil_prod) / #CIACountries$as.integer(net_users))
+
+#think of what the answer will look like. net users table, with number between 0 and 1, which is proportion of those that produce oil. new variable using mutate
+CIACountries %>% 
+  mutate(anyoil = (oil_prod > 0) + 0) %>% # boolean trues and falses
+  group_by(net_users) %>% #doesnt change just preps for summary
+  summarise(oil_prop = mean(anyoil, na.rm = TRUE)) 
+  #can't compute mean with NAs there, so use na.rm aka remove
+  #NA omit function will remove whole record if has one NA.
+#"This shows that those who use more internet come from countries with more money and thus it is likely also oil production"   
+
+```
 
 
 
