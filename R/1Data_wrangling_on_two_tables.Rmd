@@ -1,0 +1,75 @@
+---
+title: "Data Wrangling on Two Tables"
+author: "Gregory J. Matthews"
+date: "9/23/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Inner Join
+Inner joins return results if the keys are matched in BOTH tables.
+
+```{r}
+library(tidyverse)
+library(mdsr)
+library(nycflights13)
+
+head(airlines)
+head(flights)
+
+```
+
+```{r}
+#Old school
+flights_joined <- merge(flights, airlines, by.x = "carrier", by.y = "carrier")
+glimpse(flights_joined)
+```
+
+```{r}
+#inner join default. this is still in base R
+flights_joined %>% 
+  select(carrier, name, flight, origin, dest) %>% 
+  head(3)
+```
+
+```{r}
+#and this is tidyverse
+flights_joined <- flights %>% 
+  inner_join(airlines, by = c("carrier" = "carrier"))
+glimpse(flights_joined)
+```
+
+```{r}
+flights_joined %>% 
+  select(carrier, name, flight, origin, dest) %>% 
+  head(3)
+```
+
+```{r}
+nrow(flights)
+nrow(flights_joined)
+```
+
+
+"In an inner join.........." quote
+***another quote***
+
+```{r}
+#Airports in the pacific time zone only
+airports_pt <- airports %>%
+  filter(tz == -8) %>% select(faa, name, tz)
+nrow(airports_pt)
+head(airports_pt)
+```
+
+```{r}
+#if we do inner join
+nyc_dests_pt <- flights %>%
+  inner_join(airports.pt, by = c("dest"="faa")) %>% select(name, tz, dest, dep_time, sched_dep_time, arr_time, sched_arr_time, carrier)
+
+```
+
+
