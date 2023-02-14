@@ -375,6 +375,7 @@ g
 
 NHANES example
 ```{r}
+#"relevel the reference category"
 library(NHANES)
 ggplot(
   data = slice_sample(NHANES, n = 1000), 
@@ -404,9 +405,9 @@ ggplot(
 ```{r}
 library(macleish)
 ggplot(data = whately_2015, aes(x = when, y = temperature)) + 
-  geom_line(color = "darkgray") + 
-  geom_smooth() + 
-  xlab(NULL) + 
+  geom_line(color = "darkgray") + #makes the bars that show range of points?
+  geom_smooth() + #add the line and smooth it
+  xlab(NULL) + #no label x axis
   ylab("Temperature (degrees Celsius)")
 ```
 ```{r}
@@ -415,6 +416,7 @@ ggplot(data = whately_2015, aes(x = when, y = temperature)) +
 #   group_by(month) %>% 
 #   skim(temperature) %>%
 #   select(-na)
+
 
 whately_2015$month <-
   as.factor(lubridate::month(whately_2015$when, label = TRUE))
@@ -441,6 +443,46 @@ ggplot(
 ```
 
 Check out the extended example here: https://mdsr-book.github.io/mdsr2e/ch-vizII.html#sec:babynames
+
+
+
+```{r}
+library(cherry)
+ggplot(aes(x= gun, color = sex), data= Cherry) + geom_density()
+ggplot(aes(x = gun, color = sex), data = Cherry) + geom_boxplot()
+
+#now no automatics. now y is gun
+ggplot(aes(y = gun, color = sex), data= Cherry) + geom_density() + coord_flip()
+
+#no histogram stratified by color vs by fill. 
+#fill does the inside, and color the line
+ggplot(aes(x= gun, color = sex), data= Cherry) + geom_histogram(color= "yellow")
+ggplot(aes(x= gun, color = sex), data= Cherry) + geom_histogram(fill= "brown")
+
+#experimenting with fill and color further
+ggplot(aes(x= gun, color = sex), data= Cherry) + geom_density(color="blue", fill="lavender", lwd=3)
+
+#using fill with transparency.
+
+#displaying two graphs
+#filter and chain to ggplot
+Cherry %>% filter(year %in% c(1999, 2008))
+ggplot(aes(x = gun), data=sub) + geom_density() + facet_wrap(~year)
+#facet wrap puts them nicely in a grid. hilariously, facet_grid squishes them to be tall
+
+#the point here is that you can make this not that you should.
+dont <- Cherry %>% filter(year %in% c(1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008)) #c(1999:2008) also works
+dont <- Cherry %>% filter(year %in% c(1999:2008))
+ggplot(aes(x= as.factor(nruns), color = sex), data=dont) + geom_boxplot() + facet_wrap(~ year)
+
+#as.factor(nruns) #dont forget the as part
+#facet by year,
+
+
+```
+
+
+
 
 
 # In class exercise
